@@ -18,9 +18,9 @@ peira implements the designs and mechanisms by which units come to be treated an
 It builds on four sibling libraries:
 
 - **calx**, for random streams and linear algebra;
-- **morphe**, for graphs (causal graphs, later);
+- **morphe**, as the siblings' order requires;
 - **physis**, as the siblings' order requires;
-- **tyche**, for distributions, regression, generalised linear models and permutation p-values.
+- **tyche**, for distributions, regression, generalised linear models, panels with absorbed effects (tyche::panel) and permutation p-values.
 
 Out of scope:
 
@@ -60,7 +60,7 @@ peira shares its governing principle with its sibling repositories: **modular, e
 ```
 peira/
 ├── CMakeLists.txt   the project: one header-only target peira::<module> per module (peira_module); the siblings added once
-├── design/ · randomisation/ · weighting/ · surveys/ · survival/ · missing/
+├── design/ · randomisation/ · weighting/ · surveys/ · survival/ · missing/ · quasi/ · graphs/ · cohorts/
 ├── docs/            the theory note
 └── development/     decisions · ideas · release notes
 ```

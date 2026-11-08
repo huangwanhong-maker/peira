@@ -99,13 +99,53 @@ is unbiased for the variance of the estimated total. Here $f_h = 0$ with replace
 
 The approximate Bayesian bootstrap (Rubin and Schenker 1986) is a proper imputation within classes: resampling the donors first carries the uncertainty of each class's law. *Checked* by simulation: under MAR given a class, the complete-case mean is biased by $-1.16$, while twenty imputations pooled by Rubin's rules cover the mean at the nominal rate.
 
-## 7. What Comes Next
+## 7. Identification by Assumptions on the Outcome
+
+*Module `quasi`.* When the mechanism of assignment is not known, an assumption on the potential outcomes can take its place. Each result below has the shape of Definition 1.2, with an assumption that the data cannot test entirely.
+
+**Theorem 7.1 (group-time effects; Callaway and Sant'Anna 2021, Thm 1).** Let units be first treated in period $G \in \{2, \dots, T\} \cup \{\infty\}$, treatment being absorbing, and let $C$ be a comparison group (never treated, or not yet treated by $t$). Suppose there is no anticipation ($Y_t = Y_t(0)$ for $t < G$), and parallel trends: $E[Y_t(0) - Y_{g-1}(0) \mid G = g] = E[Y_t(0) - Y_{g-1}(0) \mid C]$. Then for $t \ge g$
+$$\mathrm{ATT}(g, t) = E[Y_t(g) - Y_t(0) \mid G = g] = E[Y_t - Y_{g-1} \mid G = g] - E[Y_t - Y_{g-1} \mid C].$$
+
+*Proof.* $E[Y_t - Y_{g-1} \mid G = g] = \mathrm{ATT}(g, t) + E[Y_t(0) - Y_{g-1}(0) \mid G = g]$ by no anticipation. Substitute parallel trends, and use that the comparison units are untreated at $t$ and $g - 1$. ∎
+
+*Remark.* The static two-way regression is a weighted sum of such comparisons, some with negative weights when effects vary with exposure (Goodman-Bacon 2021). *Checked:* with effects growing with exposure in two groups, the regression gives 1.94 where the average effect is 2.43, while every $\mathrm{ATT}(g, t)$ is recovered exactly. With one constant effect the two agree.
+
+**Theorem 7.2 (the local average treatment effect; Imbens and Angrist 1994).** Let $Z \in \{0, 1\}$ be an instrument and $D(z)$, $Y(d)$ the potential treatments and outcomes, with $Z$ independent of $(D(0), D(1), Y(0), Y(1))$. Suppose $Z$ affects $Y$ only through $D$, monotonicity holds ($D(1) \ge D(0)$), and $P(D(1) > D(0)) > 0$. Then
+$$\frac{E[Y \mid Z = 1] - E[Y \mid Z = 0]}{E[D \mid Z = 1] - E[D \mid Z = 0]} = E[Y(1) - Y(0) \mid D(1) > D(0)].$$
+
+*Proof.* The numerator is $E[(D(1) - D(0))(Y(1) - Y(0))]$, and with monotonicity $D(1) - D(0)$ is the indicator of compliers. The denominator is their share. ∎
+
+*Checked:* the 2SLS estimate is the ratio exactly, and recovers the compliers' effect beside always-takers whose effect differs.
+
+**Theorem 7.3 (regression discontinuity; Hahn, Todd and van der Klaauw 2001).**
+- **Sharp.** If $D = [x \ge c]$ and $E[Y(0) \mid x]$, $E[Y(1) \mid x]$ are continuous at $c$, then $\lim_{x \downarrow c} E[Y \mid x] - \lim_{x \uparrow c} E[Y \mid x] = E[Y(1) - Y(0) \mid x = c]$.
+- **Fuzzy.** If $P(D = 1 \mid x)$ jumps at $c$, the outcomes' means are continuous, and monotonicity holds near $c$, then the ratio of the jumps in $E[Y \mid x]$ and $E[D \mid x]$ is the compliers' average effect at $c$.
+
+Local linear regression estimates each one-sided limit with bias $O(h^2)$ at the boundary, without the $O(h)$ of a local mean (Fan and Gijbels 1996). *Checked:* the bias falls by 3.9998 when $h$ halves, lines give the jump exactly, and the fuzzy estimate is the ratio of the jumps.
+
+**Synthetic control.** When outcomes follow a linear factor model $Y_{it}(0) = \delta_t + \lambda_t \mu_i + \varepsilon_{it}$, the synthetic control's bias is bounded by terms that vanish as the pre-treatment fit becomes exact and $T_0$ grows (Abadie, Diamond and Hainmueller 2010, §2.3). Inference is by permutation in space. If the treated unit was as likely as any donor to be the one treated, the rank of its post-to-pre ratio has the uniform law on $\{1, \dots, J + 1\}$, so the p-value is exact for that null (ibid., §2.4).
+
+## 8. Causal Graphs
+
+*Module `graphs`.* A directed acyclic graph $\mathcal{G}$ on variables encodes a causal model, $X_v = f_v(\mathrm{pa}(v), \varepsilon_v)$ with independent $\varepsilon$.
+
+**Definition 8.1 (d-separation; Pearl 1988).** A path is *blocked* by $Z$ when it contains a non-collider in $Z$, or a collider that is not in $Z$ and has no descendant in $Z$. $X$ and $Y$ are *d-separated* by $Z$ when every path between them is blocked.
+
+**Theorem 8.2 (soundness and completeness).**
+- **Soundness.** If $X$ and $Y$ are d-separated by $Z$, then $X \perp Y \mid Z$ in every distribution that factorises over $\mathcal{G}$ (Verma and Pearl 1988).
+- **Completeness.** If they are not, the independence fails in some such distribution (Geiger, Verma and Pearl 1990). In linear Gaussian models it fails for all coefficients outside a set of measure zero (Spirtes, Glymour and Scheines 2000).
+
+*Checked:* on twelve random graphs with random coefficients, d-separation and the vanishing of the partial correlation computed from $\Sigma = (I - B)^{-1}(I - B)^{-\top}$ agree in all 4,032 cases.
+
+**Theorem 8.3 (adjustment; Pearl 2009, Thms 3.3.2 and 3.3.4).**
+- **Back door.** If $Z$ contains no descendant of $X$ and d-separates $X$ from $Y$ in $\mathcal{G}$ with the arrows out of $X$ removed, then $P(y \mid do(x)) = \sum_z P(y \mid x, z) P(z)$.
+- **Front door.** If $Z$ intercepts every directed path from $X$ to $Y$, no back-door path from $X$ to $Z$ is open, and $X$ blocks every back-door path from $Z$ to $Y$, then $P(y \mid do(x)) = \sum_z P(z \mid x) \sum_{x'} P(y \mid x', z) P(x')$.
+
+*Checked* on the elementary graphs, on M-bias (adjusting for the collider $M$ opens a path) and on the front door with a hidden confounder.
+
+## 9. What Comes Next
 
 These results are written in the later stages of the infrastructure's ADR 0082:
-- **Identification by assumptions on the outcome rather than the mechanism:**
-  - parallel trends identify the effect on the treated (difference in differences);
-  - exclusion and monotonicity identify the local average effect of compliers (instrumental variables; Imbens and Angrist 1994);
-  - continuity identifies a regression discontinuity's effect at its cut-off (Hahn, Todd and van der Klaauw 2001);
-  - the back-door criterion identifies effects from a causal graph (Pearl 1995).
-- **Non-identification shown exactly.** In the age–period–cohort model, age $=$ period $-$ cohort, so the design matrix loses one dimension of its linear trends. Only the second differences (curvatures) are identified (Holford 1983). The Lexis diagram's arithmetic makes this a theorem the code can check.
+- **Cohorts** (begun, the module `cohorts`): the Lexis diagram's person-time and events, exact rates, standardisation, for demography (the infrastructure's ADR 0085). Next in it is non-identification shown exactly: in the age–period–cohort model, age $=$ period $-$ cohort, so the design matrix loses one dimension of its linear trends. Only the second differences (curvatures) are identified (Holford 1983).
 - **Partial identification.** Without assumptions on the mechanism, effects are bounded, not identified (Manski 1990). The bounds and Rosenbaum's sensitivity parameter quantify how much an untestable assumption carries.
+- **Synthesis and sequential testing:** meta-analysis, and boundaries that keep their level when data are looked at as they come.

@@ -120,16 +120,20 @@ This file:   the record of who made this repository and of the terms on
 5. MATERIAL OF OTHERS
 ---------------------
 
-5.1 No file carries code or values transcribed from others' software.
-    Methods are written from their published descriptions, which each
-    file cites. The checks use synthetic images whose answers are
-    known exactly (tubes, tori and trees of known radii) and the
-    published examples the other checks name.
+5.1 No file carries code transcribed from others' software. Methods
+    are written from their published descriptions, which each file
+    cites. Two files carry data as the lifelines library (MIT licence)
+    ships them: survival/tests/fixtures/rossi.csv (Rossi, Berk and
+    Lenihan 1980, the standard example of Fox 2002) and waltons.csv
+    (from lifelines' documentation). The values the checks hold them
+    to were computed by running statsmodels and lifelines
+    (make_survival_fixtures.py, beside them). Elsewhere, wherever a
+    design can be enumerated, the checks enumerate it.
 
 5.2 The reference values in the checks are facts taken from the
     published references that each check names.
 
-5.3 Datasets are not part of the repository and keep their own
+5.3 Other datasets are not part of the repository and keep their own
     licences, some of them non-commercial; the data library records
     each with its source and licence.
 

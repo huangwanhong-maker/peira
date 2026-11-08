@@ -12,6 +12,8 @@ Each record captures one decision that shapes the structure, interfaces or tooli
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
 | [0002](0002-scope-boundaries-and-dependencies.md) | Scope, boundaries and dependencies: designs and the mechanisms of observation | Accepted |
 | [0003](0003-the-first-modules.md) | The first modules | Accepted, provisionally |
+| [0004](0004-quasi-experiments-and-causal-graphs.md) | Quasi-experiments and causal graphs: the second stage | Accepted, provisionally |
+| [0005](0005-cohorts-begun.md) | Cohorts begun: the Lexis diagram, rates and standardisation | Accepted, provisionally |
 
 ## 2. Template
 

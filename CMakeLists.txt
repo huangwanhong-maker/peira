@@ -65,3 +65,10 @@ peira_module(weighting LIBRARIES peira::design tyche::probability tyche::regress
 peira_module(surveys LIBRARIES peira::weighting tyche::probability)
 peira_module(survival LIBRARIES tyche::probability calx::linalg)
 peira_module(missing LIBRARIES peira::design tyche::probability)
+peira_module(quasi LIBRARIES tyche::panel tyche::regression tyche::probability calx::linalg calx::random)
+peira_module(graphs LIBRARIES calx::linalg)
+peira_module(cohorts LIBRARIES tyche::probability)
+# The instruments' checks, moved with them from nomos (peira's decision 0004), beside quasi's own.
+if(PEIRA_CHECKS)
+  calx_add_check(check_peira_instrumental SOURCES quasi/tests/check_instrumental.cpp LIBRARIES peira::quasi calx::random)
+endif()
