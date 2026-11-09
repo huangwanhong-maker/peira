@@ -9,15 +9,16 @@ The assignment mechanisms by which units come to be treated, and the samples the
 ## 2. Content
 
 - `design.hpp`: Bernoulli, complete, blocked and clustered assignment, drawn from calx's streams; `each_complete` and `each_bernoulli` visit every assignment for exact randomisation distributions; `binomial_coefficient`.
+- `choice.hpp` ([decision 0007](../development/decisions/0007-stated-choice-designs.md)): `ChoiceAttribute`, `ChoiceDesign`; `choice_information`, `d_error`, `bayesian_d_error` under the logit at priors; `coordinate_exchange` from random starts; `level_counts`.
 - `power.hpp`: the power of a difference in means or proportions, and the sample per arm it needs, by the normal approximation; Kish's design effect.
 
 ## 3. Checks
 
-Uniformity of complete randomisation (χ²), exact counts in blocks and clusters, Bernoulli enumeration; the 63 per arm for δ = σ/2 and 97 for proportions 0.6 against 0.4, and power against simulated z-tests.
+`check_peira_choice_designs` (8): the bound D₀ = 1/S attained by the foldover of an orthogonal array and reached by coordinate exchange, a pair's information ddᵀ/4, designs at priors. Uniformity of complete randomisation (χ²), exact counts in blocks and clusters, Bernoulli enumeration; the 63 per arm for δ = σ/2 and 97 for proportions 0.6 against 0.4, and power against simulated z-tests.
 
 ## 4. Dependencies
 
-calx `random`, tyche `probability`.
+calx `random` and `linalg`, tyche `probability`.
 
 ## 5. References
 

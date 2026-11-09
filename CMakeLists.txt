@@ -59,7 +59,7 @@ function(peira_module name)
 endfunction()
 
 # The modules in their order (decision 0003).
-peira_module(design LIBRARIES calx::random tyche::probability)
+peira_module(design LIBRARIES calx::random calx::linalg tyche::probability)
 peira_module(randomisation LIBRARIES peira::design tyche::probability tyche::testing)
 peira_module(weighting LIBRARIES peira::design tyche::probability tyche::regression calx::linalg)
 peira_module(surveys LIBRARIES peira::weighting tyche::probability)
@@ -72,4 +72,5 @@ peira_module(interference LIBRARIES peira::quasi peira::design calx::linalg calx
 # The instruments' checks, moved with them from nomos (peira's decision 0004), beside quasi's own.
 if(PEIRA_CHECKS)
   calx_add_check(check_peira_instrumental SOURCES quasi/tests/check_instrumental.cpp LIBRARIES peira::quasi calx::random)
+  calx_add_check(check_peira_choice_designs SOURCES design/tests/check_choice_designs.cpp LIBRARIES peira::design calx::linalg calx::random)
 endif()

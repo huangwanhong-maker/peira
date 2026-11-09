@@ -18,7 +18,7 @@ A method belongs here when its object is the mechanism and what it identifies. I
 
 | Module | Holds | Status |
 |---|---|---|
-| [design](design/README.md) | Assignment mechanisms (Bernoulli, complete, blocked, clustered) and their enumeration; power and sample size | draft |
+| [design](design/README.md) | Assignment mechanisms (Bernoulli, complete, blocked, clustered) and their enumeration; power and sample size; stated-choice designs by their D-errors and coordinate exchange ([decision 0007](development/decisions/0007-stated-choice-designs.md)) | draft |
 | [randomisation](randomisation/README.md) | Neyman's difference in means and its conservative variance; stratified estimates; Fisher's randomisation test | draft |
 | [weighting](weighting/README.md) | Horvitz–Thompson, Hájek, their variance estimators; inverse-probability weighting; the doubly robust estimator | draft |
 | [surveys](surveys/README.md) | Totals, means and ratios under strata and clusters, with the ultimate-cluster variance; raking and post-stratification | draft |
@@ -35,7 +35,7 @@ A method belongs here when its object is the mechanism and what it identifies. I
 
 ## 3. Checks
 
-`node development/tools/run-cpp.mjs foundations/peira foundations/peira` from the infrastructure's root builds and runs the 160 checks. Wherever a design can be enumerated, a check enumerates it: unbiasedness, variance identities and the level of a test then hold exactly. Survival is held to statsmodels 0.15.0 and lifelines 0.30.3 on Rossi's recidivism study (`survival/tests/fixtures/`, with the script that made them).
+`node development/tools/run-cpp.mjs foundations/peira foundations/peira` from the infrastructure's root builds and runs the 168 checks. Wherever a design can be enumerated, a check enumerates it: unbiasedness, variance identities and the level of a test then hold exactly. Survival is held to statsmodels 0.15.0 and lifelines 0.30.3 on Rossi's recidivism study (`survival/tests/fixtures/`, with the script that made them).
 
 ## 4. Dependencies
 
