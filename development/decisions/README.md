@@ -14,6 +14,7 @@ Each record captures one decision that shapes the structure, interfaces or tooli
 | [0003](0003-the-first-modules.md) | The first modules | Accepted, provisionally |
 | [0004](0004-quasi-experiments-and-causal-graphs.md) | Quasi-experiments and causal graphs: the second stage | Accepted, provisionally |
 | [0005](0005-cohorts-begun.md) | Cohorts begun: the Lexis diagram, rates and standardisation | Accepted, provisionally |
+| [0006](0006-interference.md) | Interference: treatments that reach beyond their units | Accepted, provisionally |
 
 ## 2. Template
 

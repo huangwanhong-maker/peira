@@ -15,7 +15,7 @@ The theory, with proofs, is in [docs/theory.md](../docs/theory.md), §7.
 ## 2. Content
 
 - `difference_in_differences.hpp` (moved from nomos): the 2 × 2 estimator with clustered errors; the two-way fixed-effects regression.
-- `staggered.hpp`: ATT(g, t) against never or not-yet treated units (Callaway and Sant'Anna 2021), their simple and exposure aggregations with a unit bootstrap; the static and dynamic two-way regressions for comparison.
+- `staggered.hpp`: ATT(g, t) against never or not-yet treated units (Callaway and Sant'Anna 2021), or, with `reached`, against units not yet touched by any treatment (for `interference`, decision 0006), their simple and exposure aggregations with a unit bootstrap; the static and dynamic two-way regressions for comparison.
 - `instrumental.hpp` (moved from nomos): two-stage least squares with classical, HC0, HC1 and clustered covariances, the first stage's F and partial R², Sargan's and Hansen's tests; `wald`, the local average treatment effect with a binary instrument.
 - `discontinuity.hpp`: sharp and fuzzy regression discontinuity by local linear regression (triangular, Epanechnikov, uniform kernels), robust standard errors, a bandwidth by leave-one-out cross-validation at the boundary.
 - `synthetic.hpp`: synthetic control weights on the simplex (accelerated projected gradient, the exact projection), gaps, RMSPE before and after, placebo inference in space; `project_simplex`.

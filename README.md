@@ -27,6 +27,7 @@ A method belongs here when its object is the mechanism and what it identifies. I
 | [quasi](quasi/README.md) | Differences in differences (2 × 2 and two-way, moved from nomos), staggered adoption by group and period (Callaway and Sant'Anna) with event studies; instrumental variables (moved from nomos) and the Wald estimator of the local average effect; regression discontinuity, sharp and fuzzy, with a cross-validated bandwidth; synthetic control with inference in space | draft |
 | [graphs](graphs/README.md) | Causal graphs: d-separation, the back-door and front-door criteria, minimal adjustment sets | draft |
 | [cohorts](cohorts/README.md) | Person-time and events on the Lexis diagram, rates with exact intervals, direct and indirect standardisation (begun for demography); age–period–cohort and what it cannot identify, planned | draft |
+| [interference](interference/README.md) | Treatments that reach beyond their units: exposure mappings by rings of distance, direct and spillover effects in a two-way regression and by staggered adoption, synthetic control with clean donors, an exact test of no spillovers | draft |
 | synthesis | Meta-analysis: fixed and random effects, heterogeneity, publication bias | planned |
 | sequential | Group-sequential boundaries, alpha spending, always-valid inference | planned |
 | sensitivity | Rosenbaum's bounds, E-values, Manski's bounds | planned |
@@ -34,7 +35,7 @@ A method belongs here when its object is the mechanism and what it identifies. I
 
 ## 3. Checks
 
-`node development/tools/run-cpp.mjs foundations/peira foundations/peira` from the infrastructure's root builds and runs the 146 checks. Wherever a design can be enumerated, a check enumerates it: unbiasedness, variance identities and the level of a test then hold exactly. Survival is held to statsmodels 0.15.0 and lifelines 0.30.3 on Rossi's recidivism study (`survival/tests/fixtures/`, with the script that made them).
+`node development/tools/run-cpp.mjs foundations/peira foundations/peira` from the infrastructure's root builds and runs the 160 checks. Wherever a design can be enumerated, a check enumerates it: unbiasedness, variance identities and the level of a test then hold exactly. Survival is held to statsmodels 0.15.0 and lifelines 0.30.3 on Rossi's recidivism study (`survival/tests/fixtures/`, with the script that made them).
 
 ## 4. Dependencies
 

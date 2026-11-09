@@ -11,6 +11,7 @@ peira implements the designs and mechanisms by which units come to be treated an
 - potential outcomes and estimands; randomised designs, their power and randomisation inference;
 - weighting by the probability of being seen; designs of samples and their estimates;
 - survival and censoring; cohorts;
+- interference: treatments that reach units beyond those they are given to;
 - missing data and multiple imputation;
 - quasi-experiments; adjustment sets on causal graphs;
 - meta-analysis, sequential testing, sensitivity and partial identification, pre-registered plans.
@@ -60,7 +61,7 @@ peira shares its governing principle with its sibling repositories: **modular, e
 ```
 peira/
 ├── CMakeLists.txt   the project: one header-only target peira::<module> per module (peira_module); the siblings added once
-├── design/ · randomisation/ · weighting/ · surveys/ · survival/ · missing/ · quasi/ · graphs/ · cohorts/
+├── design/ · randomisation/ · weighting/ · surveys/ · survival/ · missing/ · quasi/ · graphs/ · cohorts/ · interference/
 ├── docs/            the theory note
 └── development/     decisions · ideas · release notes
 ```

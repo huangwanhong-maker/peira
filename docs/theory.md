@@ -143,7 +143,48 @@ Local linear regression estimates each one-sided limit with bias $O(h^2)$ at the
 
 *Checked* on the elementary graphs, on M-bias (adjusting for the collider $M$ opens a path) and on the front door with a hidden confounder.
 
-## 9. What Comes Next
+## 9. Interference
+
+*Module `interference`.* Units $i$ are observed in periods $t$; treatments $k$ begin in periods $s_k$ and stay. The stable unit treatment value assumption says that $Y_{it}$ depends on the assignment only through unit $i$'s own treatment (Rubin 1980). Interference is its failure.
+
+**Definition 9.1 (exposure mapping by rings; Aronow and Samii 2017).** Let $d_{ik} \ge 0$ be a distance, and $0 < b_0 < \dots < b_{R-1}$ bounds. The *ring* of unit $i$ in period $t$ is
+$$r_{it} = \min\{\, r : \exists k,\ s_k \le t,\ d_{ik} < b_r \,\},$$
+with $r_{it} = R$ (unexposed) when the set is empty. The mapping *holds* when $Y_{it} = Y_{it}(r_{it})$: potential outcomes indexed by the ring alone, the same function for every assignment that gives the same rings. In particular nothing reaches beyond $b_{R-1}$. The *onset* $o_i(r)$ is the first $t$ with $r_{it} \le r$; the *entry ring* of $i$ is $r_{i, o_i(R-1)}$.
+
+*Remark.* The mapping is an assumption on the outcomes, not on the mechanism, and is not testable within itself. Finer rings show where the estimated effects fall to zero, which is evidence for the outer bound but not a proof of it (Butts 2021, §3).
+
+**Theorem 9.2 (rings in a two-way regression).** Suppose:
+- (i) the mapping holds;
+- (ii) $E[Y_{it}(R)] = \alpha_i + \gamma_t$ (parallel trends without treatment);
+- (iii) the effects are constant, $Y_{it}(r) - Y_{it}(R) = \tau_r$ for $r < R$.
+
+Then the two-way within regression of $Y$ on unit and period effects and the indicators $[r_{it} = r]$, $r < R$, identifies $(\tau_0, \dots, \tau_{R-1})$, provided the indicators are not collinear with the effects.
+
+*Proof.* Under (i)–(iii), $E[Y_{it}] = \alpha_i + \gamma_t + \sum_{r<R} \tau_r [r_{it} = r]$ exactly. The model is correctly specified, and the within estimator is unbiased for its coefficients when the design matrix after absorbing the effects has full rank. ∎
+
+**Proposition 9.3 (the bias of ignoring spillovers; Butts 2021, §2).** In a balanced panel where every treatment begins in the same period, regress on the direct indicator $[r_{it} = 0]$ alone, under (i)–(iii) and without noise. Its coefficient is
+$$\tau_0 - \sum_{r=1}^{R-1} \frac{n_r}{n_c}\, \tau_r,$$
+where $n_r$ is the number of units in ring $r$ after the onset and $n_c = \sum_{r \ge 1} n_r + n_R$ is the number of units compared with.
+
+*Proof.* With one onset and a balanced panel, the two-way coefficient on a single indicator equals the difference in differences of means: $\big(\bar Y^{\,0}_{post} - \bar Y^{\,0}_{pre}\big) - \big(\bar Y^{\,c}_{post} - \bar Y^{\,c}_{pre}\big)$. The first change is $(\bar\gamma_{post} - \bar\gamma_{pre}) + \tau_0$. The second is $(\bar\gamma_{post} - \bar\gamma_{pre}) + \sum_{r \ge 1} n_r \tau_r / n_c$, the comparison group's mean change. ∎
+
+*Checked* without noise to $10^{-13}$, with 48 units spilled over and 60 unexposed.
+
+**Theorem 9.4 (rings with timing that varies).** Assume (i) and (ii), and that the effect of being in ring $r$ may vary with the onset group and the period. Then for each ring $r$ and onset $g$ of units entering in ring $r$,
+$$ATT_r(g, t) = E[Y_t - Y_{g-1} \mid \text{entry } r,\ o(r) = g] - E[Y_t - Y_{g-1} \mid o(R-1) > \max(t, g-1)]$$
+is the average effect at $t$ of being in ring $r$ on those units. This holds for $t \ge g$ while they are still in ring $r$, and the comparison is the units not yet reached.
+
+*Proof.* The comparison units are in ring $R$ at both $t$ and $g - 1$, so by (i) their mean change is $\gamma_t - \gamma_{g-1}$ by (ii). The entering units are in ring $R$ at $g - 1$ and in ring $r$ at $t$. Their mean change is $\gamma_t - \gamma_{g-1} + E[Y_t(r) - Y_t(R) \mid \cdot\,]$. This is Callaway and Sant'Anna's argument, with "not yet treated" read as "not yet reached". ∎
+
+*Checked* without noise to $10^{-15}$. Treating the spilled-over units as never treated instead biases the direct effect, from 5 to 4.2 in the check.
+
+**Theorem 9.5 (an exact test of no spillovers; Athey, Eckles and Imbens 2018).** Let the assignment be complete randomisation, and fix focal units $F$ without regard to outcomes. Under the null that no unit's outcome depends on others' treatments, the outcomes of $F$ are fixed given $Z_F$. Let $T(Z)$ be any function of $(Y_F, Z)$. Draw $Z'$ from the design conditional on $Z'_F = Z_F$, and set $p = P\{|T(Z')| \ge |T(Z)| \mid Z_F\}$. Then $P(p \le \alpha \mid Z_F) \le \alpha$ for every $\alpha$.
+
+*Proof.* Given $Z_F$, the observed $Z$ is a uniform draw from the conditional design, and under the null $T$ is a fixed function on it. The p-value of a statistic's value is the upper tail of its own distribution under uniform sampling, so it is stochastically no smaller than uniform. ∎
+
+*Checked* by enumerating the 120 assignments of 3 of 10 units: in every class of the focal units' treatments, $P(p \le \alpha) \le \alpha$ for six levels, with no excess.
+
+## 10. What Comes Next
 
 These results are written in the later stages of the infrastructure's ADR 0082:
 - **Cohorts** (begun, the module `cohorts`): the Lexis diagram's person-time and events, exact rates, standardisation, for demography (the infrastructure's ADR 0085). Next in it is non-identification shown exactly: in the age–period–cohort model, age $=$ period $-$ cohort, so the design matrix loses one dimension of its linear trends. Only the second differences (curvatures) are identified (Holford 1983).

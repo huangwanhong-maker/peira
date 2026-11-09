@@ -17,6 +17,11 @@
 // Their standard errors are from a nonparametric bootstrap over units (the whole series of a unit drawn together), from a calx
 // stream given by the caller; CS 2021 use a multiplier bootstrap, asymptotically equivalent.
 //
+// UNITS REACHED BEFORE THEY ARE TREATED. With interference a unit may be touched by others' treatments (a spillover) before, or
+// without, its own. An optional `reached` gives each unit's first period touched by any treatment, no later than its first treated
+// period; a unit then serves as a comparison only while not yet reached (never reached, under never_treated). Without it, reached is
+// the first treated period, and the estimator is the one above (interference.hpp, peira's decision 0006).
+//
 // TWO-WAY FIXED EFFECTS. The static regression of Y on unit and period effects and the treatment indicator D_it = [t ≥ G_i], and
 // the dynamic one on relative-period indicators (e = −1 left out), estimated by tyche's within estimator. With effects that vary
 // across groups or over exposure, their coefficients are weighted sums of the ATT(g, t) with weights that may be negative
@@ -64,17 +69,22 @@ struct Wide {
   std::vector<std::int64_t> units, periods;
   std::vector<std::map<std::int64_t, double>> y;        // per unit: period → outcome
   std::vector<std::int64_t> first;                      // per unit: G_i
+  std::vector<std::int64_t> reached;                    // per unit: the first period touched by any treatment, ≤ G_i
 };
 
-inline Wide wide(std::span<const double> y, std::span<const std::int64_t> unit, std::span<const std::int64_t> period, std::span<const std::int64_t> first) {
+inline Wide wide(std::span<const double> y, std::span<const std::int64_t> unit, std::span<const std::int64_t> period, std::span<const std::int64_t> first,
+                 std::span<const std::int64_t> reached = {}) {
   require(unit.size() == y.size() && period.size() == y.size() && first.size() == y.size(), "a unit, a period and a first treated period for every observation");
+  require(reached.empty() || reached.size() == y.size(), "a first period reached for every observation, or none");
   Wide w;
   std::map<std::int64_t, std::size_t> index;
   std::set<std::int64_t> periods;
   for (std::size_t i = 0; i < y.size(); i++) {
+    const std::int64_t ri = reached.empty() ? first[i] : reached[i];
+    require(ri <= first[i], "a unit reached no later than it is treated");
     auto [it, fresh] = index.emplace(unit[i], w.units.size());
-    if (fresh) w.units.push_back(unit[i]), w.y.emplace_back(), w.first.push_back(first[i]);
-    require(w.first[it->second] == first[i], "one first treated period per unit");
+    if (fresh) w.units.push_back(unit[i]), w.y.emplace_back(), w.first.push_back(first[i]), w.reached.push_back(ri);
+    require(w.first[it->second] == first[i] && w.reached[it->second] == ri, "one first treated and one first reached period per unit");
     w.y[it->second][period[i]] = y[i];
     periods.insert(period[i]);
   }
@@ -91,9 +101,9 @@ inline GroupTime group_time(const Wide& w, const std::vector<std::size_t>& draw,
     const auto& yi = w.y[i];
     const auto a = yi.find(t), b = yi.find(base);
     if (a == yi.end() || b == yi.end()) continue;
-    const std::int64_t gi = w.first[i];
+    const std::int64_t gi = w.first[i], ri = w.reached[i];
     if (gi == g) st += a->second - b->second, r.treated++;
-    else if (gi == never || (c == Comparison::not_yet_treated && gi > std::max(t, base) && gi != g)) sc += a->second - b->second, r.comparison++;
+    else if (ri == never || (c == Comparison::not_yet_treated && ri > std::max(t, base))) sc += a->second - b->second, r.comparison++;
   }
   r.att = (r.treated > 0 && r.comparison > 0) ? st / static_cast<double>(r.treated) - sc / static_cast<double>(r.comparison) : std::numeric_limits<double>::quiet_NaN();
   return r;
@@ -132,11 +142,13 @@ inline Estimates estimate(const Wide& w, const std::vector<std::size_t>& draw, C
 
 }  // namespace detail
 
-// Group-time effects and their aggregations; `first` is each observation's unit's first treated period (never for none).
-// Bootstrap standard errors from `replications` draws of units (0 for none) on the stream given.
+// Group-time effects and their aggregations; `first` is each observation's unit's first treated period (never for none), and
+// `reached` (optional) its first period touched by any treatment. Bootstrap standard errors from `replications` draws of units (0 for
+// none) on the stream given.
 inline StaggeredFit staggered(std::span<const double> y, std::span<const std::int64_t> unit, std::span<const std::int64_t> period, std::span<const std::int64_t> first,
-                              Comparison comparison = Comparison::never_treated, std::size_t replications = 0, calx::random::Stream* stream = nullptr) {
-  const auto w = detail::wide(y, unit, period, first);
+                              Comparison comparison = Comparison::never_treated, std::size_t replications = 0, calx::random::Stream* stream = nullptr,
+                              std::span<const std::int64_t> reached = {}) {
+  const auto w = detail::wide(y, unit, period, first, reached);
   std::vector<std::size_t> all(w.units.size());
   for (std::size_t i = 0; i < all.size(); i++) all[i] = i;
   StaggeredFit fit;
