@@ -16,6 +16,7 @@ Each record captures one decision that shapes the structure, interfaces or tooli
 | [0005](0005-cohorts-begun.md) | Cohorts begun: the Lexis diagram, rates and standardisation | Accepted, provisionally |
 | [0006](0006-interference.md) | Interference: treatments that reach beyond their units | Accepted, provisionally |
 | [0007](0007-stated-choice-designs.md) | Stated-choice designs: D-errors and coordinate exchange | Accepted, provisionally |
+| [0008](0008-imperfect-detection.md) | Imperfect detection: occupancy, repeated counts, capture–recapture and distance sampling | Accepted, provisionally |
 
 ## 2. Template
 

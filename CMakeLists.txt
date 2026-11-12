@@ -69,8 +69,13 @@ peira_module(quasi LIBRARIES tyche::panel tyche::regression tyche::probability c
 peira_module(graphs LIBRARIES calx::linalg)
 peira_module(cohorts LIBRARIES tyche::probability)
 peira_module(interference LIBRARIES peira::quasi peira::design calx::linalg calx::random)
-# The instruments' checks, moved with them from nomos (peira's decision 0004), beside quasi's own.
+peira_module(detection LIBRARIES tyche::probability calx::optimisation calx::special_functions calx::quadrature calx::solvers calx::linalg calx::random)
+# The instruments' checks, moved with them from nomos (peira's decision 0004), beside quasi's own; and detection's designs one by
+# one beside its occupancy (decision 0008).
 if(PEIRA_CHECKS)
   calx_add_check(check_peira_instrumental SOURCES quasi/tests/check_instrumental.cpp LIBRARIES peira::quasi calx::random)
   calx_add_check(check_peira_choice_designs SOURCES design/tests/check_choice_designs.cpp LIBRARIES peira::design calx::linalg calx::random)
+  calx_add_check(check_peira_n_mixture SOURCES detection/tests/check_n_mixture.cpp LIBRARIES peira::detection calx::random)
+  calx_add_check(check_peira_capture_recapture SOURCES detection/tests/check_capture_recapture.cpp LIBRARIES peira::detection calx::random)
+  calx_add_check(check_peira_distance_sampling SOURCES detection/tests/check_distance_sampling.cpp LIBRARIES peira::detection peira::weighting calx::random)
 endif()

@@ -4,7 +4,7 @@ Status: **draft** (2026-11-08). Module `peira::cohorts`.
 
 ## 1. Concepts
 
-A cohort is seen in time: each life a segment on the Lexis diagram of calendar time and age, cut by its grid into person-time and events. Rates are events over person-time, and rates of populations of different structure are compared by standardising them. The general methods of demography and epidemiology begin here; the theory is in [docs/theory.md](../docs/theory.md), §10, and the module's header.
+A cohort is seen in time: each life a segment on the Lexis diagram of calendar time and age, cut by its grid into person-time and events. Rates are events over person-time, and rates of populations of different structure are compared by standardising them. The general methods of demography and epidemiology begin here; the theory is in [docs/theory.md](../docs/theory.md), §11, and the module's header.
 
 ## 2. Content
 

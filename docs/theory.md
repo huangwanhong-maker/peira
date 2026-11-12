@@ -184,9 +184,76 @@ is the average effect at $t$ of being in ring $r$ on those units. This holds for
 
 *Checked* by enumerating the 120 assignments of 3 of 10 units: in every class of the focal units' treatments, $P(p \le \alpha) \le \alpha$ for six levels, with no excess.
 
-## 10. What Comes Next
+## 10. Imperfect Detection
+
+*Module `detection`.* A survey of what lives at a place never sees everything: a site that holds something may yield no detection, an individual near a line may pass unseen, a population is caught only in part. The full data are what is there; the mechanism is detection, which reveals each thing present with a probability $p < 1$ and never reveals what is absent.
+
+**Definition 10.1 (detection as coarsening).** Unit $i$ (a site, or a population) holds a count $N_i$ of things: its occupancy $z_i = [N_i \ge 1]$, its abundance, or the size $N$ of a closed population. On occasion $j$ each of them is detected independently with probability $p_{ij}$. What is observed is the detections.
+
+| Design | Full data $F_i$ | Mechanism $R$ | What identifies $p$ |
+|---|---|---|---|
+| Occupancy | $z_i \in \{0, 1\}$ | detection on each visit | $T \ge 2$ visits while $z_i$ is fixed |
+| N-mixture | $N_i \in \{0, 1, \dots\}$ | each counted on each visit | $T \ge 2$ counts while $N_i$ is fixed |
+| Capture–recapture | the $N$ capture histories | capture on each occasion | marks: who is caught again |
+| Distance sampling | positions in the plane | detection at distance $x$ with $g(x)$ | the distances, and $g(0) = 1$ |
+
+*Remark.* This is §1's structure with one difference from §2: the probability of being seen is not set by the design, so it is not known. A single look cannot tell what is absent from what was missed, since $P(\text{nothing seen}) = (1 - \psi) + \psi (1 - p)$ is a function of $\psi p$. Each design replicates the mechanism so that its law is identified from the data; this is not coarsening at random (Definition 1.3), since whether a unit is seen depends on what it holds.
+
+**Theorem 10.2 (one structure: Horvitz and Thompson with estimated inclusion probabilities).** In each design the estimate of the hidden total is $\sum_{\text{seen}} 1/\hat\pi$, with $\hat\pi$ the estimated probability of being seen at least once:
+- **(a) Occupancy** with constant $\psi$, $p$ and complete histories of $T$ visits at $s$ sites, $s_D$ of them with a detection and $d$ detections in all: if $s_D \le s\, p^*(\hat p)$, the maximum likelihood estimate is
+$$\hat p:\ \frac{d}{s_D T} = \frac{\hat p}{1 - (1 - \hat p)^T}, \qquad s \hat\psi = \frac{s_D}{p^*(\hat p)}, \qquad p^*(p) = 1 - (1 - p)^T.$$
+- **(b) Capture–recapture (model $M_t$)**: Darroch's (1958) equation $1 - M/N = \prod_j (1 - n_j/N)$ is $N = M / (1 - \prod_j (1 - \hat p_j))$ with $\hat p_j = n_j/N$.
+- **(c) Distance sampling** on lines of length $L$ with truncation $w$: with $\mu = \int_0^w g$, an individual in the covered area $2wL$ is seen with probability $P_a = \mu / w$, and $\hat D \cdot 2wL = n/\hat P_a$.
+
+*Proof.*
+- (a) The likelihood is $L = (\psi p^*)^{s_D} (1 - \psi p^*)^{s - s_D} \cdot \prod_{i\ \text{detected}} p^{y_i}(1 - p)^{T - y_i}/p^*$. With $\theta = \psi p^*$, the first factor is binomial in $\theta$, maximised at $\hat\theta = s_D/s$. The second depends on $p$ alone: it is a binomial truncated at zero, and setting its score to zero and multiplying by $p(1 - p)$ gives $d = s_D T p/(1 - (1 - p)^T)$. The map $(\psi, p) \mapsto (\theta, p)$ is a bijection onto $\{\theta \le p^*(p)\}$, so when $\hat\theta \le p^*(\hat p)$ the joint maximum is $(\hat\theta/p^*(\hat p), \hat p)$.
+- (b) For fixed $N$ the likelihood $\frac{N!}{(N - M)!} \prod_j p_j^{n_j}(1 - p_j)^{N - n_j}$ is maximised at $\hat p_j = n_j/N$. The derivative in $N$ of the profile's second factor is $\sum_j \log(1 - n_j/N)$. Replacing that of $\log(N!/(N - M)!)$ by its large-$N$ form $-\log(1 - M/N)$ and setting the sum to zero gives Darroch's equation.
+- (c) Placed at random, the lines leave the distances of the individuals within $w$ uniform on $[0, w]$, so $P_a = \frac1w \int_0^w g$. ∎
+
+*Checked:* (a) against the general fit to $10^{-9}$, with the root found by calx's Brent method; (c) against `weighting`'s Horvitz–Thompson total to $10^{-15}$. The difference from §2 is that $\hat\pi$ comes from the same data, and its variance must be carried. Distance sampling carries it by the delta method; the other designs carry it in the likelihood.
+
+**Theorem 10.3 (identification by replication).**
+- **(a) Occupancy.** With one visit the likelihood depends on $(\psi, p)$ only through $\psi p$. With $T \ge 2$ visits and constant parameters, $(\psi, p)$ is identified on $\psi \in (0, 1]$, $p \in (0, 1)$.
+- **(b) N-mixture** (Royle 2004). With one visit, $\sum_N \mathrm{Poisson}(N; \lambda)\, \mathrm{Binomial}(y; N, p) = \mathrm{Poisson}(y; \lambda p)$, so only $\lambda p$ is identified. With two visits, $E[y_j] = \lambda p$ and $\operatorname{Cov}(y_1, y_2) = p^2 \operatorname{Var}(N) = \lambda p^2$ identify $p$ and $\lambda$.
+
+*Proof.*
+- (a) $P(y_i = 1) = \psi p$ when $T = 1$. For $T \ge 2$ the law of $Y_i = \sum_j y_{ij}$ gives $P(Y_i = 0) = 1 - \psi p^*$. Given $Y_i \ge 1$, its law is a binomial truncated at zero, with $P(Y = 2 \mid Y \ge 1)/P(Y = 1 \mid Y \ge 1) = \frac{T - 1}{2} \frac{p}{1 - p}$, strictly increasing in $p$. So $p$ is identified, then $\psi = \theta/p^*$.
+- (b) Thinning: given $N$, $y$ is binomial, and a binomial thinning of a Poisson is Poisson. Given $N$ the two counts are independent, so their covariance is $\operatorname{Cov}(Np, Np)$. ∎
+
+*Remark.* Identification is not stability. With few visits the N-mixture likelihood can be maximised at $\lambda = \infty$ with positive probability (Dennis, Morgan and Ridout 2015). The Poisson and negative binomial mixtures can also give very different $\hat\lambda$ from the same counts. *Checked:* the one-visit identities exactly, and the thinning posterior $N - y \sim \mathrm{Poisson}(\lambda(1 - p))$ to $10^{-15}$.
+
+**Theorem 10.4 (the information of a latent mixture; Louis 1982).** Let $\ell(\theta) = \log \sum_N f(y, N; \theta)$. Then
+$$\nabla \ell = E[\nabla \log f \mid y], \qquad \nabla^2 \ell = E[\nabla^2 \log f \mid y] + \operatorname{Var}[\nabla \log f \mid y],$$
+the expectations taken under the posterior $f(y, N)/\sum_{N'} f(y, N')$.
+
+*Proof.* Write $L = \sum_N f$. Then $\nabla L / L = \sum_N (f/L) \nabla \log f$, and $\nabla^2 \ell = \nabla^2 L / L - (\nabla L/L)(\nabla L/L)^\top$. Finally $\nabla^2 L / L = \sum_N (f/L)(\nabla^2 \log f + \nabla \log f\, \nabla \log f^\top)$. ∎
+
+Occupancy is the N-mixture model with $N_i \in \{0, 1\}$, and one sum serves both. The scores of detection, $y_{ij} - N p_{ij}$, are linear in $N$, so the posterior moments of $N$ and of the latent law's scores give the Hessian exactly. *Checked* against differences of the gradient to $3 \times 10^{-10}$, the differences' own error. Over 500 simulated occupancy surveys and 200 N-mixture surveys, the Wald intervals cover at the nominal rate within 3.5 Monte Carlo standard errors.
+
+**Theorem 10.5 (Chapman's estimator; Chapman 1951).** Let $m_2$ be hypergeometric: $n_2$ drawn from $N$, of which $n_1$ are marked. Then
+$$E\Big[\frac{(n_1 + 1)(n_2 + 1)}{m_2 + 1} - 1\Big] = N - (n_2 + 1)\binom{N - n_1}{n_2 + 1}\Big/\binom{N}{n_2},$$
+which is $N$ exactly when $n_1 + n_2 \ge N$.
+
+*Proof.* $\binom{n_1}{m}/(m + 1) = \binom{n_1 + 1}{m + 1}/(n_1 + 1)$. Hence
+$$E\Big[\frac{(n_1 + 1)(n_2 + 1)}{m_2 + 1}\Big] = \frac{n_2 + 1}{\binom{N}{n_2}} \sum_{m' \ge 1} \binom{n_1 + 1}{m'} \binom{N - n_1}{n_2 + 1 - m'}.$$
+By Vandermonde's identity the sum over all $m' \ge 0$ is $\binom{N + 1}{n_2 + 1}$, and the missing term $m' = 0$ is $\binom{N - n_1}{n_2 + 1}$. Since $(n_2 + 1)\binom{N + 1}{n_2 + 1} = (N + 1)\binom{N}{n_2}$, subtracting 1 gives the result. The binomial coefficient vanishes when $n_2 + 1 > N - n_1$. ∎
+
+*Checked* by enumerating $m_2$ in five unbiased cases and three biased ones, to $10^{-11}$.
+
+**Theorem 10.6 (distance sampling; Buckland et al. 2001, ch. 3).** Suppose that $g(0) = 1$, that the lines (points) are placed independently of the individuals, and that distances are exact and taken before individuals move. Then the distances within $w$ have density $g(x)/\mu$ (lines) or $2\pi r g(r)/\nu$ (points), with $\nu = 2\pi \int_0^w r g(r)\, dr$, and
+$$\hat D = \frac{n}{2 L \hat\mu} \quad (\text{lines}), \qquad \hat D = \frac{n}{k \hat\nu} \quad (k \text{ point visits}).$$
+For the half-normal $g(x) = e^{-x^2/(2\sigma^2)}$ without truncation, $\hat\sigma^2 = \sum x^2/n$ (lines) and $\sum r^2/(2n)$ (points). The information of $\log\sigma$ at the estimate is $2n$ (lines) or $4n$ (points), so the cv of $\hat\mu \propto \hat\sigma$ is $1/\sqrt{2n}$ and that of $\hat\nu \propto \hat\sigma^2$ is $1/\sqrt n$.
+
+*Proof.* The density of the distances follows from uniformity (lines) or from the area $2\pi r\, dr$ of an annulus (points), weighted by $g$. On lines, $\ell(\theta) = -n\theta - S e^{-2\theta}/2$ with $\theta = \log\sigma$ and $S = \sum x^2$. It is stationary where $S e^{-2\theta} = n$, with $\ell'' = -2S e^{-2\theta} = -2n$ there. On points, $f(r) = (r/\sigma^2) e^{-r^2/(2\sigma^2)}$ gives $\ell = -2n\theta - S e^{-2\theta}/2$, stationary where $S e^{-2\theta} = 2n$, with $\ell'' = -4n$. ∎
+
+*Remark.* The distances identify the shape $g/\mu$, not the level $g(0)$. That everything on the line is seen is an assumption the design must secure, by observers or by a second observer (not written here).
+
+*Checked:* the closed forms to $3 \times 10^{-10}$, and the delta method's cv to $10^{-7}$. Over 200 simulated line surveys and 150 point surveys, the log-normal intervals cover at the nominal rate.
+
+## 11. What Comes Next
 
 These results are written in the later stages of the infrastructure's ADR 0082:
 - **Cohorts** (begun, the module `cohorts`): the Lexis diagram's person-time and events, exact rates, standardisation, for demography (the infrastructure's ADR 0085). Next in it is non-identification shown exactly: in the age–period–cohort model, age $=$ period $-$ cohort, so the design matrix loses one dimension of its linear trends. Only the second differences (curvatures) are identified (Holford 1983).
 - **Partial identification.** Without assumptions on the mechanism, effects are bounded, not identified (Manski 1990). The bounds and Rosenbaum's sensitivity parameter quantify how much an untestable assumption carries.
 - **Synthesis and sequential testing:** meta-analysis, and boundaries that keep their level when data are looked at as they come.
+- **Detection, further** (the module `detection` begun, decision 0008): heterogeneity of detection among individuals (models $M_h$, $M_b$, $M_{th}$, whose $N$ is identified only within a family of mixtures; Link 2003), open populations (Cormack–Jolly–Seber, Jolly–Seber), occupancy across seasons, spatially explicit capture–recapture, and detection functions with covariates. Each keeps the structure of §10: a design that replicates the mechanism, and the assumption it cannot test stated.

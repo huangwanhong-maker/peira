@@ -13,12 +13,13 @@ peira implements the designs and mechanisms by which units come to be treated an
 - survival and censoring; cohorts;
 - interference: treatments that reach units beyond those they are given to;
 - missing data and multiple imputation;
+- imperfect detection: occupancy, abundance from repeated counts, capture–recapture, distance sampling;
 - quasi-experiments; adjustment sets on causal graphs;
 - meta-analysis, sequential testing, sensitivity and partial identification, pre-registered plans.
 
 It builds on four sibling libraries:
 
-- **calx**, for random streams and linear algebra;
+- **calx**, for random streams and linear algebra, and for optimisation, quadrature and special functions;
 - **morphe**, as the siblings' order requires;
 - **physis**, as the siblings' order requires;
 - **tyche**, for distributions, regression, generalised linear models, panels with absorbed effects (tyche::panel) and permutation p-values.
@@ -61,7 +62,7 @@ peira shares its governing principle with its sibling repositories: **modular, e
 ```
 peira/
 ├── CMakeLists.txt   the project: one header-only target peira::<module> per module (peira_module); the siblings added once
-├── design/ · randomisation/ · weighting/ · surveys/ · survival/ · missing/ · quasi/ · graphs/ · cohorts/ · interference/
+├── design/ · randomisation/ · weighting/ · surveys/ · survival/ · missing/ · quasi/ · graphs/ · cohorts/ · interference/ · detection/
 ├── docs/            the theory note
 └── development/     decisions · ideas · release notes
 ```
@@ -110,6 +111,7 @@ When a change needs a sibling to change as well, commit them in dependency order
 - **Arms.** z = 1 is treated, z = 0 is control; effects are treated minus control.
 - **Weights.** A weight is the inverse of a probability of being seen, w = 1/π.
 - **Censoring.** event = 1 is an event seen; 0 is censored at the time given.
+- **Detection.** In a table of sites by visits, a count (1 or 0 for a detection), or −1 for a visit not made; a design matrix of detection has one row per site and visit, row i·visits + j. Capture histories are 1 caught, 0 not. Distances and efforts share one unit of length.
 - **Writing style.**
   - Headings are declarative, numbered and academic, never questions.
   - Concepts come before structure.
